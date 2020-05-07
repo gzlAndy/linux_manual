@@ -1,0 +1,102 @@
+NAME	
+       cat - concatenate files and print on the standard output
+			 连接文件并打印到标准输出设备上
+			 查看文件内容命令
+SYNOPSIS
+	   语法格式
+       cat [OPTION]... [FILE]...
+	   
+DESCRIPTION 说明
+       Concatenate FILE(s), or standard input, to standard output.
+		连接文件(可多个)或者标准输入输出到标准输出设备上
+       -A, --show-all
+              equivalent to -vET
+			  等价于 -vET
+			  
+	   -e     equivalent to -vE
+			  等价于 -vE	
+	  
+	   -t     equivalent to -vT
+			  等价于 -vT
+			  
+       -b, --number-nonblank
+              number nonempty output lines
+			   对所有输出行(除过空行)进行编号，从1开始
+     
+
+       -E, --show-ends
+              display $ at end of each line
+			  在行尾显示$
+
+       -n, --number
+              number all output lines
+			  对所有输出行进行编号，从1开始
+
+       -s, --squeeze-blank
+              suppress repeated empty output lines
+			  抑制重复的空输出行
+			  当遇到有连续两行以上的空白行，就代换为一行的空白行
+    
+       -T, --show-tabs
+              display TAB characters as ^I
+			  显示制表符为^
+
+       -u     (ignored)
+
+       -v, --show-nonprinting
+              use ^ and M- notation, except for LFD and TAB
+			  使用 ^ 和 M- 符号，除了 LFD 和 TAB 之外。
+
+       --help display this help and exit
+			   显示帮助文档并且退出
+
+       --version
+              output version information and exit
+			  输出版本信息并且退出
+
+       With no FILE, or when FILE is -, read standard input.
+	   没有指定文件或者当文件是-，读取标准输入的信息
+
+EXAMPLES 案例
+	   cat a.log 读取文件并输入到标准输出
+	   示例
+		   [root@linux152 ~]# cat a.log 
+			mysqladmin: connect to server at 'localhost' failed
+			error: 'Access denied for user 'root'@'localhost' (using password: NO)'
+		
+		cat -n a.log 读取文件并输入到标准输出并显示行号
+		示例：
+			[root@linux152 ~]# cat -n a.log 
+			 1	
+			 2	
+			 3	mysqladmin: connect to server at 'localhost' failed
+			 4	
+			 5	
+			 6	
+			 7	error: 'Access denied for user 'root'@'localhost' (using password: NO)'
+		
+		cat -b a.log 读取文件并输入到标准输出并显示行号(除过空行)
+		示例:	
+			[root@linux152 ~]# cat -b a.log 
+
+
+			 1	mysqladmin: connect to server at 'localhost' failed
+
+
+
+			 2	error: 'Access denied for user 'root'@'localhost' (using password: NO)'
+			 
+			
+		cat -ns a.log 读取文件并输入到标准输出并显示行号，重复的空行只输出一行
+		示例：
+			[root@linux152 ~]# cat -ns a.log 
+			 1	
+			 2	mysqladmin: connect to server at 'localhost' failed
+			 3	
+			 4	error: 'Access denied for user 'root'@'localhost' (using password: NO)'
+
+			 
+
+		
+
+

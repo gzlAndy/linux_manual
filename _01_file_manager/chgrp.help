@@ -1,0 +1,87 @@
+NAME
+       chgrp - change group ownership
+	   改变文件或目录的所属群组
+
+SYNOPSIS
+       chgrp [OPTION]... GROUP FILE...
+       eg:chgrp root test.txt
+	   
+	   chgrp [OPTION]... --reference=RFILE FILE...
+	   eg:chgrp --reference=test.txt test1.txt
+		
+		
+DESCRIPTION
+       Change  the  group of each FILE to GROUP.  With --reference, change the
+       group of each FILE to that of RFILE.
+	   
+	   改变每一个文件的属组，当使用reference属性时，改变每一个文件的属组为指定文件的属组。
+
+       -c, --changes
+              like verbose but report only when a change is made
+			  类似于verbose|v，但是只报告了进行更改的部分。
+			  
+
+       --dereference
+              affect the referent of each symbolic link (this is the default),
+              rather than the symbolic link itself			  
+			  默认值，改变每一个符号链接的引用而不是它本身		
+				
+
+       -h, --no-dereference
+              affect each symbolic link instead of any referenced file (useful
+              only on systems that can change the ownership of a symlink)
+			  改变符号链接本身而不是任何引用文件
+
+       --no-preserve-root
+              do not treat ‘/’ specially (the default)
+			  不特别对待'/'
+       --preserve-root
+              fail to operate recursively on ‘/’
+			  不能对"/"进行递归操作
+
+       -f, --silent, --quiet
+              suppress most error messages
+			  抑制大多数错误信息
+
+       --reference=RFILE
+              use RFILE’s group rather than specifying a GROUP value
+			  使用指定文件的组值而不是指定的组值
+
+       -R, --recursive
+              operate on files and directories recursively
+			  
+
+       -v, --verbose
+              output a diagnostic for every file processed
+
+       The following options modify how a hierarchy is traversed when  the  -R
+       option  is  also  specified.   If  more than one is specified, only the
+       final one takes effect.
+
+       -H     if a command line argument is a symbolic link  to  a  directory,
+              traverse it
+
+       -L     traverse every symbolic link to a directory encountered
+
+       -P     do not traverse any symbolic links (default)
+
+       --help display this help and exit
+
+       --version
+              output version information and exit
+
+EXAMPLES
+       chgrp staff /u
+              Change the group of /u to "staff".
+
+       chgrp -hR staff /u
+              Change the group of /u and subfiles to "staff".
+
+SEE ALSO
+       The full documentation for chgrp is maintained as a Texinfo manual.  If
+       the info and chgrp programs are properly installed at  your  site,  the
+       command
+
+              info coreutils 'chgrp invocation'
+
+       should give you access to the complete manual.

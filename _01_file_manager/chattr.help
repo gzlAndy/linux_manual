@@ -1,0 +1,250 @@
+NAME  
+       chattr - change file attributes on a Linux file system
+	   改变文件属性在linux的文件系统中
+
+SYNOPSIS 语法格式
+       chattr [ -RVf ] [ -v version ] [ mode ] files...
+
+DESCRIPTION  描述
+       chattr changes the file attributes on a Linux file system.
+	   chattr命令改变文件的属性在Linux文件系统中。
+
+       The format of a symbolic mode is +-=[acdeijstuADST].
+	   符号模式的格式是+-=[acdeijstuADST]
+
+       The  operator  ‘+’  causes  the  selected attributes to be added to the
+       existing attributes of the files; ‘-’ causes them to  be  removed;  and
+       ‘=’ causes them to be the only attributes that the files have.
+	   操作符+将选择的属性添加到文件现有的属性;
+	   操作符-将选择的属性从文件现有的属性中移除;
+	   操作符=将选择的属性设置为文件的唯一属性。
+	   
+		
+       The  letters  ‘acdeijstuADST’  select the new attributes for the files:
+       append only (a), compressed  (c),  no  dump  (d),  extent  format  (e),
+       immutable (i), data journalling (j), secure deletion (s), no tail-merg-
+       ing (t), undeletable (u), no atime updates (A),  synchronous  directory
+       updates  (D),  synchronous  updates (S), and top of directory hierarchy
+       (T).
+	   字母‘acdeijstuADST’表示文件的属性
+	   a：将文件设置为append-only-file，即只可向文件追加内容，而不能覆盖和删除。只有特权用户或者拥有CAP_LINUX_IMMUTABLE的普通用户可以设置这个属性
+	   c：文件会自动在内核中压缩后存储。读取文件操作会得到未压缩的数据，而写入文件操作会先把数据压缩再存到磁盘中
+	   d：文件不会成为dump程序的备份目标
+	   e：文件使用extents来映射磁盘上的块。chattr可能无法删除这个属性。
+	   i：文件不能被修改，包括写入、删除、重命名和建立符号链接等。只有特权用户或者拥有CAP_LINUX_IMMUTABLE的普通用户可以设置这个属性。
+	   j：
+	   s：当文件被删除时，它占用的block会被清零并回收，即完全删除，保护你的隐私。
+	   t： 文件在于其他文件合并（tail-merging）时，不会产生尾部块碎片。
+	   u：不能删除的，预防意外删除。
+	   A：不更新文件或目录的最后存取时间。
+	   D：有这个属性的目录被修改时，其更改会同步写到磁盘上。相当于mount命令的dirsync选项。
+	   S：当文件被修改时，修改会同时写到磁盘。相当于mount时的sync选项
+	   T：设置该属性的目录，会被认为是Orlov block allocator机制的顶层目录，它告诉ext3/ext4，它的各个子目录是没有关系的，在为子目录分配磁盘块时也应尽量分离来。
+		  而在没有设置该属性的目录下，子目录通常会分配相近的块。该属性很适用于设置到/home目录，来隔离各用户文件夹。
+	   
+
+       The following attributes are read-only, and may be listed by  lsattr(1)
+       but  not  modified  by  chattr:  huge  file (h), compression error (E),
+       indexed directory (I), compression raw access (X), and compressed dirty
+       file (Z).
+	
+	   以下属性是只读的，它能被lsattr查询到但是不能被chattr修改。
+	   h：巨大的文件
+	   E：压缩错误
+	   I：索引目录
+	   X：原始压缩访问
+	   Z：压缩脏文件
+OPTIONS  参数，选项
+       -R     Recursively change attributes of directories and their contents.
+			 递归更改属性
+			
+       -V     Be verbose with chattr’s output and print the program version.
+			  详细地说明chattr输出并打印程序版本
+
+       -f     Suppress most error messages.
+			  抑制大多数错误信息
+				
+       -v version
+              Set the file’s version/generation number.
+			  设置文件的版本/生成号
+
+ATTRIBUTES 属性详解
+       When a file with the ’A’ attribute set is accessed, its atime record is
+       not modified.  This avoids a certain amount of disk I/O for laptop sys-
+       tems.
+	   
+	   当具有属性A的文件被访问时，它的访问时间记录是不被修改的。
+	   这使系统避免了一定数量的磁盘IO。
+		
+       A file with the ‘a’ attribute set can only be open in append  mode  for
+       writing.    Only   the   superuser   or   a   process   possessing  the
+       CAP_LINUX_IMMUTABLE capability can set or clear this attribute.
+	   
+	   当一个文件具有a属性时，只能被追加内容而不能修改。
+	   只有超级用户root和进程拥有CAP_LINUX_IMMUTABLE功能可以设置和清除这个属性。
+	   
+
+       A file with the ‘c’ attribute set is automatically  compressed  on  the
+       disk  by  the kernel.  A read from this file returns uncompressed data.
+       A write to this file compresses data before storing them on  the  disk.
+       Note:  please make sure to read the bugs and limitations section at the
+       end of this document.
+	   
+	   当文件具有属性c时，内核会在在磁盘上自动压缩该文件。
+	   读取文件时返回未压缩的数据。
+	   写文件时会在将数据存储到磁盘之前进行压缩。
+	   请务必阅读"缺陷和限制"在本文件的结束。
+	   
+       When a directory with the ‘D’ attribute set is  modified,  the  changes
+       are  written  synchronously  on  the  disk;  this  is equivalent to the
+       ‘dirsync’ mount option applied to a subset of the files.
+	   当一个具有D属性的目录被修改时，变化的内容会被同步的写到磁盘上。
+	   这个等价于在mount时给文件子集应用了dirsync参数。
+	   
+
+       A file with the ‘d’ attribute set is not candidate for backup when  the
+       dump(8) program is run.
+	   运行dump程序时，具有属性d的文件不是备份的候选文件。
+
+       The  ’E’  attribute  is used by the experimental compression patches to
+       indicate that a compressed file has a compression error.  It may not be
+       set  or  reset  using  chattr(1),  although  it  can  be  displayed  by
+       lsattr(1).
+	   
+	   具有E属性的文件由试验压缩补丁使用到，指示压缩文件有错误，
+	  它可能没有使用chattr设置和重置，尽管可以使用lsattr显示.
+	   
+
+       The ’e’ attribute indicates that the file is using extents for  mapping
+       the blocks on disk.  It may not be removed using chattr(1).
+	   e属性表示文件正在使用区段进行映射磁盘上的块。
+	   它不能使用chattr删除。
+
+       The  ’I’  attribute is used by the htree code to indicate that a direc-
+       tory is being indexed using hashed trees.  It may not be set  or  reset
+       using chattr(1), although it can be displayed by lsattr(1).
+	   htree代码使用I属性表明正在使用散列数索引目录。
+	   它可能没有使用chattr设置和重置，尽管可以使用lsattr显示.
+	   
+	  
+       The  ’h’ attribute indicates the file is storing its blocks in units of
+       the filesystem blocksize instead of in units of sectors, and means that
+       the file is (or at one time was) larger than 2TB.  It may not be set or
+       reset using chattr(1), although it can be displayed by lsattr(1).
+	   h属性表示文件存储它的块的基本单元是文件系统的块大小而不是扇区的单位。
+	   这意味着文件(或者曾经)大于2TB。
+	   它可能没有使用chattr设置和重置，尽管可以使用lsattr显示.
+	   
+
+       A file with the ‘i’ attribute cannot be modified: it cannot be  deleted
+       or  renamed,  no  link  can  be created to this file and no data can be
+       written to the file.  Only the superuser or a  process  possessing  the
+       CAP_LINUX_IMMUTABLE capability can set or clear this attribute.
+	   具有属性i的文件不能被改变，
+	   不能删除或者重命名
+	   不能创建连接并且不能写入数据。
+	   只有超级用户root或者具有 CAP_LINUX_IMMUTABLE功能的进程可以设置或者清除该属性。
+	   
+
+       A  file  with the ‘j’ attribute has all of its data written to the ext3
+       journal before being written to the file itself, if the  filesystem  is
+       mounted  with the "data=ordered" or "data=writeback" options.  When the
+       filesystem is mounted with the "data=journal" option all file  data  is
+       already  journalled  and  this attribute has no effect.  Only the supe-
+       ruser or a process possessing the CAP_SYS_RESOURCE capability  can  set
+       or clear this attribute.
+	   
+	   如果文件系统被挂载使用"data=ordered" 或者 "data=writeback"选项，
+	   具有属性j的文件将所有的数据写入ext3在写入文件本身之前。
+	   
+	   如果文件系统被挂载使用data=journa选项，所有文件已经记录，此属性无效。
+	   只有超级用户root或者具有CAP_SYS_RESOURCE功能的进程可以设置或清除该属性。
+	   
+       When  a  file  with  the  ‘s’  attribute set is deleted, its blocks are
+       zeroed and written back to the disk.  Note: please make  sure  to  read
+       the bugs and limitations section at the end of this document.
+	   当具有s属性的文件被删除时，它的块被删除归零并写回磁盘。
+	   提示:请务必阅读文档末尾的bug和限制部分。
+	   
+       When  a  file  with  the ‘S’ attribute set is modified, the changes are
+       written synchronously on the disk; this is  equivalent  to  the  ‘sync’
+       mount option applied to a subset of the files.
+	   具有S属性的文件被修改时，修改的内容将被同步写到磁盘;
+	   这个等价于被挂载的文件子集应用sync选项。
+	   
+
+       A  directory  with  the  ’T’  attribute will be deemed to be the top of
+       directory hierarchies for the purposes of the  Orlov  block  allocator.
+       This  is  a  hint to the block allocator used by ext3 and ext4 that the
+       subdirectories under this directory are not related, and thus should be
+       spread  apart  for allocation purposes.   For example it is a very good
+       idea to  set  the  ’T’  attribute  on  the  /home  directory,  so  that
+       /home/john  and  /home/mary are placed into separate block groups.  For
+       directories where this attribute is not set, the Orlov block  allocator
+       will try to group subdirectories closer together where possible.
+	   具有T属性的目录被认为是顶级目录，用于Orlov块分配器的目录层次结构。
+	   这提示ext3和ext4使用的块分配器此目录下的子目录不相关，因此应该是相关的分散用于分配目的。
+	   
+	   例如：给/home设置T属性是一个非常好的主意，所以/home/john和/home/mary被放在单独的块组中。
+	   
+	   Orlov块分组器对于未设置T属性的目录，尝试在可能的情况下将子目录更紧密的分组。
+	   
+
+       A file with the ’t’ attribute will not have a partial block fragment at
+       the end of the file merged with  other  files  (for  those  filesystems
+       which  support  tail-merging).  This is necessary for applications such
+       as LILO which read the filesystem directly, and which don’t  understand
+       tail-merged files.  Note: As of this writing, the ext2 or ext3 filesys-
+       tems do not (yet, except in very experimental  patches)  support  tail-
+       merging.
+	   具有属性t的文件不会有局部块碎片，在文件末尾与其他的文件合并在支持tail-merging的文件系统中。
+	   这对于这样的程序是必须的，它直接读取文件而不理解文件系统tail-merged文件.
+	   提示:ext2和ext3文件系统不支持tail-merging,除了在非常实验性的补丁中.
+	   
+       When  a  file  with  the ‘u’ attribute set is deleted, its contents are
+       saved.  This allows the user to ask for its undeletion.   Note:  please
+       make  sure  to read the bugs and limitations section at the end of this
+       document.
+	  
+	   具有u属性的文件被删除时,它的内容被保留.这允许用户请求删除它.
+	   提示:请务必阅读bugs和限制在文档的末尾.
+
+       The ’X’ attribute is used by the experimental  compression  patches  to
+       indicate  that  a  raw  contents  of  a compressed file can be accessed
+       directly.  It currently may  not  be  set  or  reset  using  chattr(1),
+       although it can be displayed by lsattr(1).
+	   X属性被使用在试验压缩补丁使用到指示可以直接访问压缩文件的原始内容.
+	   它可能没有使用chattr设置和重置，尽管可以使用lsattr显示.
+
+       The  ’Z’  attribute  is used by the experimental compression patches to
+       indicate a compressed file is dirty.  It may not be set or reset  using
+       chattr(1), although it can be displayed by lsattr(1).
+	   Z属性由试验压缩补丁使用到,表示压缩文件是脏的.
+	   他可能没有被chattr设置或重置,尽管可以使用lsattr显示.
+
+BUGS AND LIMITATIONS 缺陷和限制
+       The ‘c’, ’s’,  and ‘u’ attributes are not honored by the ext2 and  ext3
+       filesystems  as  implemented  in  the  current  mainline Linux kernels.
+       These attributes may be implemented in future versions of the ext2  and
+       ext3 filesystems.
+	   在当前的主流Linux内核版本实现的ext2和ext3文件系统中，属性c，s，u没有被支持，
+	   可能会在未来的版本中实现支持。
+		
+		
+       The ‘j’ option is only useful if the filesystem is mounted as ext3.
+	   选项j仅仅在ext3文件系统中被挂载时有用。
+
+       The ‘D’ option is only useful on Linux kernel 2.5.19 and later.
+	   选项D只在Linux内核2.5.19以及更高版本中有用。
+	  
+案列
+	 添加属性
+	 chattr +i /etc/passwd
+	 移除属性
+	 chattr -i /etc/passwd
+	 设置属性
+	 chattr =i /etc/passwd
+	   
+	   
+
+

@@ -1,105 +1,137 @@
 TAR(1)				 User Commands				TAR(1)
 
-
-
 NAME
        tar - manual page for tar 1.23
-
-SYNOPSIS
+	   tar - tar手册页
+	   
+SYNOPSIS[概要，大纲]
        tar [OPTION...] [FILE]...
-
-DESCRIPTION
+	   
+	   
+DESCRIPTION[描述]
        GNU ‘tar’ saves many files together into a single tape or disk archive,
        and can restore individual files from the archive.
-
-EXAMPLES
+	   GNU tar 可以将许多文件保存到一个单独的磁带或者磁盘归档中，
+	   并且可以从归档中还原单独的文件。
+		
+EXAMPLES[例子]
        tar -cf archive.tar foo bar
 	      # Create archive.tar from files foo and bar.
+		  创建归档文件archive.tar并将foo和bar归档到archive.tar中
 
        tar -tvf archive.tar
 	      # List all files in archive.tar verbosely.
-
+		  详细列出归档文件archive.tar中的所有文件
+		  
        tar -xf archive.tar
 	      # Extract all files from archive.tar.
-
-	      Main operation mode:
+		  在archive.tar中解压所有文件。
+		  
+Main operation mode:主要参数
 
        -A, --catenate, --concatenate
 	      append tar files to an archive
-
+		  将tar文件添加到归档中
+		  tar -Af test.tar archive.tar
+		  
        -c, --create
 	      create a new archive
+		  创建新的归档
 
        -d, --diff, --compare
 	      find differences between archive and file system
+		  在归档和文件系统中查找不同
 
        --delete
 	      delete from the archive (not on mag tapes!)
+		  在归档中删除
 
        -r, --append
 	      append files to the end of an archive
+		  添加文件到归档中
+		  tar -rf test.tar test.sh
 
        -t, --list
 	      list the contents of an archive
+		  列出归档文件中的内容
 
        --test-label
 	      test the archive volume label and exit
+		  测试存档卷标签并退出
 
        -u, --update
 	      only append files newer than copy in archive
+		  在归档中只追加文件而不更新复制
+		  
 
        -x, --extract, --get
 	      extract files from an archive
+		  在归档中提取文件
 
 
        -C, --directory=DIR
 	      change to directory DIR
+		  解压到指定目录
 
        -f, --file=ARCHIVE
 	      use archive file or device ARCHIVE
+		  使用指定归档文件或设置归档
 
        -j, --bzip2
 	      filter the archive through bzip2
+		  使用bzip2格式进行归档
 
-	-J, --xz
+		-J, --xz
 	      filter the archive through xz
+		  使用xz方式进行归档
 
        -p, --preserve-permissions
 	      extract  information  about  file permissions (default for supe-
 	      ruser)
+		  提取文件的权限信息
 
        -v, --verbose
 	      verbosely list files processed
+		  详细显示处理文件列表
 
        -z, --gzip
 	      filter the archive through gzip
+		  使用gzip格式进程归档
 
 
-Operation modifiers:
+Operation modifiers:操作修饰符
        --check-device
 	      check   device   numbers	 when  creating	 incremental  archives
 	      (default)
+		  创建增量归档时检查设备号
 
        -g, --listed-incremental=FILE
 	      handle new GNU-format incremental backup
+		  处理新gnu格式的增量备份
 
        -G, --incremental
 	      handle old GNU-format incremental backup
+		  处理老gnu格式的增量备份
 
        --ignore-failed-read
 	      do not exit with nonzero on unreadable files
+		  在不可读的文件不使用非0退出
 
        --level=NUMBER
 	      dump level for created listed-incremental archive
+		  已创建的列式增量归档的转储级别
 
        -n, --seek
 	      archive is seekable
+		  归档是可见的
 
        --no-check-device
 	      do not check device numbers when creating incremental archives
+		  当创建增量归档时不检查设备号
 
        --no-seek
 	      archive is not seekable
+		  归档是不可见的
 
        --occurrence[=NUMBER]
 	      process only  the	 NUMBERth  occurrence  of  each	 file  in  the
